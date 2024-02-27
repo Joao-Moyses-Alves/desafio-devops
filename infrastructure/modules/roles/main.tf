@@ -194,11 +194,11 @@ resource "aws_iam_role" "aws-load-balancer-controller" {
         "Effect" : "Allow",
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Principal" : {
-          "Federated" : "arn:aws:iam::339712957572:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/9151B5D0A64F4A04EFA3ECCBC9FE4480"
+          "Federated" : "arn:aws:iam::339712957572:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/32CD149EAA9E1362F36B41B8795D21CE"
         },
         "Condition" : {
           "StringEquals" : {
-            "oidc.eks.us-east-1.amazonaws.com/id/9151B5D0A64F4A04EFA3ECCBC9FE4480:aud" : [
+            "oidc.eks.us-east-1.amazonaws.com/id/32CD149EAA9E1362F36B41B8795D21CE:aud" : [
               "sts.amazonaws.com"
             ]
           }

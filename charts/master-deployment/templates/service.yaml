@@ -1,0 +1,16 @@
+{{- include "master-deployment.labels" . | nindent 0 }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.containers.name }}
+  labels:
+    app: {{ .Values.containers.name }}
+spec:
+  selector:
+    app: {{ .Values.containers.name }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8000
+      nodePort: {{ .Values.service.nodePort }}   
+  type: NodePort   
