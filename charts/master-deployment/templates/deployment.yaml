@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.containers.name }}
+  labels:
+    app: {{ .Values.containers.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.containers.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.containers.name }} 
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::339712957572:role/aws-load-balancer-controller
+    spec:
+      containers:
+        - name: {{ .Values.containers.name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+              name: aws-iam-token
+              readOnly: true
+      volumes:
+        - name: aws-iam-token
+          projected:
+            defaultMode: 420
+            sources:
+              - serviceAccountToken:
+                  audience: sts.amazonaws.com
+                  expirationSeconds: 86400
+                  path: token

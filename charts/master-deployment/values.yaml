@@ -1,0 +1,31 @@
+replicaCount: 1
+image:
+  repository: joaomoyses/desafio-devops
+  tag: latest
+  pullPolicy: IfNotPresent
+
+containers:
+  name: desafio-devops
+
+service:
+  name: desafio-devops
+  type: NodePort 
+  port: 8000
+
+
+
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 8000}]' 
+    alb.ingress.kubernetes.io/actions.default: '{"Type": "forward"}'
+  
+  spec:
+    ingressClassName: alb
+  hosts:
+    - host: 
+      paths:
+        - path: /
+          pathType: Prefix
