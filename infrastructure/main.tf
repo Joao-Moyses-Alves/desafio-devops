@@ -1,3 +1,4 @@
+/*
 module "ecr" {
   source = "./modules/ecr"
 }
@@ -36,4 +37,4 @@ module "eks" {
   source     = "./modules/eks"
   depends_on = [module.sg]
 }
-
+*/
