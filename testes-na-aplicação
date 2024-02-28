@@ -1,0 +1,221 @@
+instalação cert-manager:
+
+kubectl apply -f /home/jalves1/Documents/repos/desafio-devops/charts/cert-manager.yaml
+namespace/cert-manager created
+customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io created
+customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io created
+serviceaccount/cert-manager-cainjector created
+serviceaccount/cert-manager created
+serviceaccount/cert-manager-webhook created
+configmap/cert-manager-webhook created
+clusterrole.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+clusterrole.rbac.authorization.k8s.io/cert-manager-view created
+clusterrole.rbac.authorization.k8s.io/cert-manager-edit created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io created
+clusterrole.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests created
+clusterrole.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-cainjector created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-issuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-clusterissuers created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificates created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-orders created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-challenges created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-ingress-shim created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-approve:cert-manager-io created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-controller-certificatesigningrequests created
+clusterrolebinding.rbac.authorization.k8s.io/cert-manager-webhook:subjectaccessreviews created
+role.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager:leaderelection created
+role.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+rolebinding.rbac.authorization.k8s.io/cert-manager-cainjector:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager:leaderelection created
+rolebinding.rbac.authorization.k8s.io/cert-manager-webhook:dynamic-serving created
+service/cert-manager created
+service/cert-manager-webhook created
+deployment.apps/cert-manager-cainjector created
+deployment.apps/cert-manager created
+deployment.apps/cert-manager-webhook created
+mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
+validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
+
+
+instalação aws-load-balancer-controller:
+
+helm install aws-load-balancer-controller /home/jalves1/Documents/repos/desafio-devops/charts/aws-load-balancer-controller -n kube-system
+NAME: aws-load-balancer-controller
+LAST DEPLOYED: Tue Feb 26 20:22:17 2024
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+AWS Load Balancer controller installed!
+
+
+instalação aplicação desafio-devops:
+
+helm install desafio-devops /home/jalves1/Documents/repos/desafio-devops/charts/master-deployment
+NAME: desafio-devops
+LAST DEPLOYED: Tue Feb 26 20:23:34 2024
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+
+Ingress instalado com external address o aplication load balancer:
+
+ default     desafio-devops  alb   *     k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com  80     14m 
+
+Aplicação desafio devops-rodando:
+
+ desafio-devops-ff5d99674-pxpqk      ●      1/1       Running                  0 10.0.1.150       ip-10-0-1-120.ec2.internal       16m 
+
+ Logs Aplicação desafio-devops:
+
+[2024-02-26 23:23:53 +0000] [1] [INFO] Starting gunicorn 20.0.4
+[2024-02-26 23:23:53 +0000] [1] [INFO] Listening at: http://0.0.0.0:8000 (1)                                                                 ││ [2024-02-27 23:23:53 +0000] [1] [INFO] Using worker: sync                                                                                    
+[2024-02-26 23:23:53 +0000] [8] [INFO] Booting worker with pid: 8  
+
+Comandos para teste na aplicação:
+
+
+- primeiro comando da listagem 1:
+
+curl -sv k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000/api/comment/new -X POST -H 'Content-Type: application/json' -d '{"email":"alice@example.com","comment":"first post!","content_id":1}'
+*   Trying 3.217.44.195:8000...
+* Connected to k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com (3.217.44.195) port 8000 (#0)
+> POST /api/comment/new HTTP/1.1
+> Host: k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 68
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Tue, 26 Feb 2024 23:44:00 GMT
+< Content-Type: application/json
+< Content-Length: 92
+< Connection: keep-alive
+< Server: gunicorn/20.0.4
+< 
+{
+  "message": "comment created and associated with content_id 1", 
+  "status": "SUCCESS"
+}
+* Connection #0 to host k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com left intact
+
+---
+
+listagem matéria 1 :
+
+curl -sv k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000/api/comment/list/1
+*   Trying 3.217.44.195:8000...
+* Connected to k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com (3.217.44.195) port 8000 (#0)
+> GET /api/comment/list/1 HTTP/1.1
+> Host: k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Tue, 26 Feb 2024 23:45:32 GMT
+< Content-Type: application/json
+< Content-Length: 251
+< Connection: keep-alive
+< Server: gunicorn/20.0.4
+< 
+[
+  {
+    "comment": "first post!", 
+    "email": "alice@example.com"
+  }, 
+  {
+    "comment": "ok, now I am gonna say something more useful", 
+    "email": "alice@example.com"
+  }, 
+  {
+    "comment": "I agree", 
+    "email": "bob@example.com"
+  }
+]
+* Connection #0 to host k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com left intact
+
+
+----
+
+- primeiro comando da listagem 2:
+
+
+curl -sv k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000/api/comment/new -X POST -H 'Content-Type: application/json' -d '{"email":"bob@example.com","comment":"I guess this is a good thing","content_id":2}'
+*   Trying 3.217.44.195:8000...
+* Connected to k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com (3.217.44.195) port 8000 (#0)
+> POST /api/comment/new HTTP/1.1
+> Host: k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 83
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Tue, 26 Feb 2024 23:46:38 GMT
+< Content-Type: application/json
+< Content-Length: 92
+< Connection: keep-alive
+< Server: gunicorn/20.0.4
+< 
+{
+  "message": "comment created and associated with content_id 2", 
+  "status": "SUCCESS"
+}
+* Connection #0 to host k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com left intact
+
+---
+
+listagem matéria 2:
+
+curl -sv k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000/api/comment/list/2
+*   Trying 3.217.44.195:8000...
+* Connected to k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com (3.217.44.195) port 8000 (#0)
+> GET /api/comment/list/2 HTTP/1.1
+> Host: k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com:8000
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Tue, 26 Feb 2024 23:49:03 GMT
+< Content-Type: application/json
+< Content-Length: 278
+< Connection: keep-alive
+< Server: gunicorn/20.0.4
+< 
+[
+  {
+    "comment": "I guess this is a good thing", 
+    "email": "bob@example.com"
+  }, 
+  {
+    "comment": "Indeed, dear Bob, I believe so as well", 
+    "email": "charlie@example.com"
+  }, 
+  {
+    "comment": "Nah, you both are wrong", 
+    "email": "eve@example.com"
+  }
+]
+* Connection #0 to host k8s-default-desafiod-6b0044a227-436043214.us-east-1.elb.amazonaws.com left intact
+
+
+
